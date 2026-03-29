@@ -38,7 +38,7 @@ func (h *fileHandler) Handle(_ context.Context, kafkaMsg *ingress.KafkaMessage, 
 	}
 
 	// Build the file row
-	fileMsg.Row = fmt.Sprintf("src_ip: %s, dst_ip: %s, id: %d, seq: %d",
+	fileMsg.Row = fmt.Sprintf("src_ip: %s, dst_ip: %s, id: %d, seq: %d\n",
 		pingEvent.GetSrcIP(), pingEvent.GetDstIP(), pingEvent.ID, pingEvent.Seq)
 
 	return nil
