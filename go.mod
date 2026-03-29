@@ -3,7 +3,7 @@ module github.com/FerroO2000/goccia-demo
 go 1.25.0
 
 require (
-	github.com/FerroO2000/goccia v0.15.4
+	github.com/FerroO2000/goccia v0.15.5
 	github.com/cilium/ebpf v0.21.0
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.67.0
 	go.opentelemetry.io/otel v1.42.0

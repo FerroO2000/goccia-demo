@@ -31,7 +31,7 @@ func main() {
 
 	// Setup stages
 	// 1. Kafka Ingress Stage
-	kafkaConfig := ingress.DefaultKafkaConfig("ping_events")
+	kafkaConfig := ingress.NewKafkaConfig("ping_events")
 	kafkaStage := ingress.NewKafkaStage(kafkaToTee, kafkaConfig)
 
 	// 2. Tee Processor Stage

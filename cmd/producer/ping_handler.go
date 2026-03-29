@@ -26,7 +26,7 @@ func (h *pingHandler) Handle(_ context.Context, ebpfMsg *PingEventMessage, kafka
 
 	// Build the Kafka event
 	kafkaMsg.Topic = "ping_events"
-	kafkaMsg.Key = fmt.Appendf(nil, "%s_%s_%d", srcIP, dstIP, pingEvent.ID)
+	kafkaMsg.Key = fmt.Appendf(nil, "%s_%s_%d", srcIP, dstIP, pingEvent.Seq)
 
 	// Encode the event as JSON
 	value, err := json.Marshal(&pingEvent)

@@ -68,7 +68,7 @@ func main() {
 	pingHandlerStage := processor.NewCustomStage(newPingHandler(), ebpfToHandler, handlerToKafka, pingHandlerConfig)
 
 	// 3. Kafka Egress Stage
-	kafkaConfig := egress.DefaultKafkaConfig(goccia.StageRunningModeSingle)
+	kafkaConfig := egress.NewKafkaConfig(goccia.StageRunningModeSingle)
 	kafkaStage := egress.NewKafkaStage(handlerToKafka, kafkaConfig)
 
 	// Setup pipeline
