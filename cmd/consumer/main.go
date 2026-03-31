@@ -15,7 +15,8 @@ func main() {
 	ctx, cancelCtx := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	defer cancelCtx()
 
-	internal.Init(ctx, "consumer-service")
+	internal.InitTelemetry(ctx, "consumer-service")
+	defer internal.CloseTelemetry()
 
 	// // Setup connectors
 	// kafkaToTee := connector.NewRingBuffer[*ingress.KafkaMessage](connectorSize)

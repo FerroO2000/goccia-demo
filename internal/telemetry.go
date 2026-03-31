@@ -39,9 +39,9 @@ func isCollectorReachable(endpoint string) bool {
 	return true
 }
 
-// Init initializes OpenTelemetry.
+// InitTelemetry initializes OpenTelemetry.
 // It prints out a warning if the connection to the OpenTelemetry collector fails.
-func Init(ctx context.Context, serviceName string) {
+func InitTelemetry(ctx context.Context, serviceName string) {
 	// Check if collector is healthy using gRPC health check
 	if !isCollectorReachable(otelCollectorEndpoint) {
 		log.Print("WARNING: OpenTelemetry collector is not healthy or not reachable")
@@ -77,8 +77,8 @@ func Init(ctx context.Context, serviceName string) {
 	}
 }
 
-// Close shut downs OpenTelemetry providers.
-func Close() {
+// CloseTelemetry shut downs OpenTelemetry providers.
+func CloseTelemetry() {
 	ctx := context.Background()
 
 	if err := tracerProvider.Shutdown(ctx); err != nil {
