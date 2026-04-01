@@ -34,7 +34,8 @@ func main() {
 
 	log.Printf("Using network interface: %s", ifname)
 
-	internal.Init(ctx, "producer-service")
+	internal.InitTelemetry(ctx, "producer-service")
+	defer internal.CloseTelemetry()
 
 	// Setup connectors
 	ebpfToHandler := connector.NewRingBuffer[*PingEventMessage](connectorSize)

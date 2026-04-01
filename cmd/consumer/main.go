@@ -20,7 +20,7 @@ func main() {
 	ctx, cancelCtx := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	defer cancelCtx()
 
-	internal.Init(ctx, "consumer-service")
+	internal.InitTelemetry(ctx, "consumer-service")
 
 	// Setup connectors
 	kafkaToTee := connector.NewRingBuffer[*ingress.KafkaMessage](connectorSize)
@@ -52,7 +52,10 @@ func main() {
 	questDbHandlerStage := processor.NewCustomStage(newQuestDBHandler(), teeToQuestDBHandler, handlerToQuestDB, questDbHandlerConfig)
 
 	// 3.2.2. QuestDB Egress Stage
-	questDBConfig := egress.NewQuestDBConfig(goccia.StageRunningModeSingle)
+	questDBConfig := egress.NewQuestDBConfig(goccia.StageRunningModePool)
+	questDBConfig.Stage.Pool.MaxWorkers = 8
+	questDBConfig.Stage.Pool.MinWorkers = 8
+	questDBConfig.Stage.Pool.InitialWorkers = 8
 	questDBStage := egress.NewQuestDBStage(handlerToQuestDB, questDBConfig)
 
 	// Setup pipeline

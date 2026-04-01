@@ -23,8 +23,8 @@ import (
 const otelCollectorEndpoint = "localhost:4317"
 
 var (
-	tracerProvider *sdktrace.TracerProvider
-	meterProvider  *sdkmetric.MeterProvider
+	globalTracerProvider *sdktrace.TracerProvider
+	globalMeterProvider  *sdkmetric.MeterProvider
 
 	traceRatio = 1.0
 )
@@ -39,9 +39,9 @@ func isCollectorReachable(endpoint string) bool {
 	return true
 }
 
-// Init initializes OpenTelemetry.
+// InitTelemetry initializes OpenTelemetry.
 // It prints out a warning if the connection to the OpenTelemetry collector fails.
-func Init(ctx context.Context, serviceName string) {
+func InitTelemetry(ctx context.Context, serviceName string) {
 	// Check if collector is healthy using gRPC health check
 	if !isCollectorReachable(otelCollectorEndpoint) {
 		log.Print("WARNING: OpenTelemetry collector is not healthy or not reachable")
@@ -62,6 +62,7 @@ func Init(ctx context.Context, serviceName string) {
 	traceExporter := newTraceExporter(ctx, grcpConn)
 	traceProvider := newTraceProvider(resource, traceExporter)
 	otel.SetTracerProvider(traceProvider)
+	globalTracerProvider = traceProvider
 
 	// Trace Propagator
 	otel.SetTextMapPropagator(propagation.TraceContext{})
@@ -70,6 +71,7 @@ func Init(ctx context.Context, serviceName string) {
 	meterExporter := newMeterExporter(ctx, grcpConn)
 	meterProvider := newMeterProvider(resource, meterExporter)
 	otel.SetMeterProvider(meterProvider)
+	globalMeterProvider = meterProvider
 
 	// Runtime
 	if err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second)); err != nil {
@@ -77,15 +79,15 @@ func Init(ctx context.Context, serviceName string) {
 	}
 }
 
-// Close shut downs OpenTelemetry providers.
-func Close() {
+// CloseTelemetry shut downs OpenTelemetry providers.
+func CloseTelemetry() {
 	ctx := context.Background()
 
-	if err := tracerProvider.Shutdown(ctx); err != nil {
+	if err := globalTracerProvider.Shutdown(ctx); err != nil {
 		panic(err)
 	}
 
-	if err := meterProvider.Shutdown(ctx); err != nil {
+	if err := globalMeterProvider.Shutdown(ctx); err != nil {
 		panic(err)
 	}
 }
